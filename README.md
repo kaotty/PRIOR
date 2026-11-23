@@ -36,8 +36,6 @@ bash sft/run.sh original-high
 
 ```bash
 bash sft/run.sh prepare ablations
-bash sft/run.sh no-tool-0       # also: no-tool-50
-bash sft/run.sh mix-25-75       # also: mix-50-50, mix-75-25
 bash sft/run.sh prepare filter25-top
 bash sft/run.sh filter25-top
 bash sft/run.sh prepare filter50-top

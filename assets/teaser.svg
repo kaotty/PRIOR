@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 290" role="img" aria-labelledby="title desc">
+  <title id="title">TIR experimental design</title>
+  <desc id="desc">Low, Medium and High SFT differ in tool-call count, followed by shared outcome-only RL and Tool-On/Tool-Off evaluation.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M1 1 L7 4.5 L1 8" fill="none" stroke="#475569" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="1198" height="288" rx="20" fill="#ffffff" stroke="#dbe3eb" stroke-width="2"/>
+
+  <rect x="24" y="24" width="426" height="242" rx="16" fill="#f4f7fc" stroke="#cbd9ec"/>
+  <text x="45" y="60" fill="#203756" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700">SFT tool-call frequency</text>
+  <rect x="45" y="80" width="384" height="43" rx="10" fill="#ffffff" stroke="#b8cce6"/>
+  <rect x="45" y="139" width="384" height="43" rx="10" fill="#ffffff" stroke="#b8cce6"/>
+  <rect x="45" y="198" width="384" height="43" rx="10" fill="#ffffff" stroke="#b8cce6"/>
+  <circle cx="70" cy="102" r="9" fill="#347db4"/>
+  <circle cx="70" cy="161" r="9" fill="#d59a28"/>
+  <circle cx="70" cy="220" r="9" fill="#c45353"/>
+  <text x="89" y="110" fill="#1e293b" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">Low</text>
+  <text x="222" y="110" fill="#41556d" font-family="Arial, Helvetica, sans-serif" font-size="18">1 call</text>
+  <text x="89" y="169" fill="#1e293b" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">Medium</text>
+  <text x="222" y="169" fill="#41556d" font-family="Arial, Helvetica, sans-serif" font-size="18">2–3 calls</text>
+  <text x="89" y="228" fill="#1e293b" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">High</text>
+  <text x="222" y="228" fill="#41556d" font-family="Arial, Helvetica, sans-serif" font-size="18">≥4 calls</text>
+
+  <path d="M450 145 H496" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <rect x="507" y="47" width="306" height="196" rx="16" fill="#fff9ed" stroke="#e8d5ab"/>
+  <text x="530" y="85" fill="#54401d" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700">Shared RL</text>
+  <text x="530" y="126" fill="#5c543f" font-family="Arial, Helvetica, sans-serif" font-size="18">16,384 questions · 32 steps</text>
+  <text x="530" y="160" fill="#5c543f" font-family="Arial, Helvetica, sans-serif" font-size="18">Outcome-only GRPO · n=5</text>
+  <text x="530" y="194" fill="#5c543f" font-family="Arial, Helvetica, sans-serif" font-size="18">8 calls · 8,192 tokens</text>
+
+  <path d="M813 145 H859" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <rect x="870" y="47" width="306" height="196" rx="16" fill="#f0f9f5" stroke="#b9dccb"/>
+  <text x="893" y="85" fill="#205340" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700">Evaluation</text>
+  <text x="893" y="124" fill="#47685a" font-family="Arial, Helvetica, sans-serif" font-size="18">6,431 shared questions</text>
+  <rect x="893" y="142" width="123" height="73" rx="9" fill="#d6efe1"/>
+  <rect x="1028" y="142" width="125" height="73" rx="9" fill="#e5eaee"/>
+  <text x="909" y="169" fill="#235743" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700">Tool-On</text>
+  <text x="902" y="195" fill="#235743" font-family="Arial, Helvetica, sans-serif" font-size="14">Zoom + Code</text>
+  <text x="1042" y="169" fill="#4b5b68" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700">Tool-Off</text>
+  <text x="1037" y="195" fill="#4b5b68" font-family="Arial, Helvetica, sans-serif" font-size="14">Direct answer</text>
+</svg>

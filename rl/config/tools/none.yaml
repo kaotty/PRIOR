@@ -1,0 +1,4 @@
+# Pure-RL four-arm baseline: no tools.
+# Keep an explicit empty list instead of a null path so all four arms use the
+# same ToolAgentLoop initialization path and differ only in this list.
+tools: []

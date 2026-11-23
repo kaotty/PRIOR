@@ -1,0 +1,46 @@
+# Shared Zoom + Code interface for the frozen RL and Tool-On evaluation recipes.
+tools:
+  - class_name: "verl.tools.image_zoom_in_tool.ImageZoomInTool"
+    config:
+      num_workers: 8
+      enable_global_rate_limit: false
+      rate_limit: 8
+      timeout: 30
+      preserve_source_resolution: true
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "image_zoom_in_tool"
+        description: "Crop and magnify a rectangular region of the input image for closer visual inspection."
+        parameters:
+          type: "object"
+          properties:
+            bbox_2d:
+              type: "array"
+              items:
+                type: "number"
+              minItems: 4
+              maxItems: 4
+              description: "Bounding box [x1, y1, x2, y2] in original-image pixel coordinates."
+            label:
+              type: "string"
+              description: "Optional label for the region."
+          required: ["bbox_2d"]
+
+  - class_name: "verl.tools.code_tool.CodeExecuteTool"
+    config:
+      max_workers: 8
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "code_interpreter"
+        description: "Execute Python for genuine computation over quantities and relations already extracted from the problem; the original image is not an input to this tool."
+        parameters:
+          type: "object"
+          properties:
+            code:
+              type: "string"
+              description: "Python source for numerical or symbolic computation."
+          required: ["code"]

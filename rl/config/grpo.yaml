@@ -1,0 +1,98 @@
+hydra:
+  searchpath:
+    - file://verl/trainer/config
+
+defaults:
+  - ppo_trainer
+  - _self_
+
+data:
+  return_raw_chat: true
+  return_multi_modal_inputs: true
+
+actor_rollout_ref:
+  hybrid_engine: true
+  model:
+    # The existing geo3k config's active template does not render `tools`.
+    # This isolated template exposes exactly the schemas loaded by each arm;
+    # with `tools: []` it emits no # Tools block at all.
+    custom_chat_template: |
+      {% set tools = tools | default([]) %}
+      {% set image_count = namespace(value=0) %}
+      {% set video_count = namespace(value=0) %}
+      {% macro render_content(content) -%}
+      {%- if content is string -%}
+      {{- content -}}
+      {%- else -%}
+      {%- for item in content -%}
+      {%- if item['type'] == 'image' or 'image' in item or 'image_url' in item -%}
+      {%- set image_count.value = image_count.value + 1 -%}
+      {%- if add_vision_id | default(false) %}Picture {{ image_count.value }}: {% endif -%}
+      <|vision_start|><|image_pad|><|vision_end|>
+      {%- elif item['type'] == 'video' or 'video' in item -%}
+      {%- set video_count.value = video_count.value + 1 -%}
+      {%- if add_vision_id | default(false) %}Video {{ video_count.value }}: {% endif -%}
+      <|vision_start|><|video_pad|><|vision_end|>
+      {%- elif item['type'] == 'text' or 'text' in item -%}
+      {{- item['text'] -}}
+      {%- endif -%}
+      {%- endfor -%}
+      {%- endif -%}
+      {%- endmacro %}
+      {% macro render_tools(tool_list) -%}
+
+      # Tools
+
+      You may call one or more functions to assist with the user query.
+      Function signatures are provided within <tools></tools> XML tags:
+      <tools>
+      {%- for tool in tool_list %}
+      {%- set fn = tool['function'] %}
+      {%- set params = fn['parameters'] %}
+      {%- set props = params['properties'] %}
+      {% if fn['name'] == 'image_zoom_in_tool' -%}
+      {"function": {"description": {{ fn['description'] | tojson }}, "name": {{ fn['name'] | tojson }}, "parameters": {"properties": {"bbox_2d": {{ props['bbox_2d'] | tojson }}, "code": null, "label": {{ props['label'] | tojson }}}, "required": {{ params['required'] | tojson }}, "type": {{ params['type'] | tojson }}}}, "type": {{ tool['type'] | tojson }}}
+      {%- elif fn['name'] == 'code_interpreter' -%}
+      {"function": {"description": {{ fn['description'] | tojson }}, "name": {{ fn['name'] | tojson }}, "parameters": {"properties": {"bbox_2d": null, "code": {{ props['code'] | tojson }}, "label": null}, "required": {{ params['required'] | tojson }}, "type": {{ params['type'] | tojson }}}}, "type": {{ tool['type'] | tojson }}}
+      {%- else -%}
+      {{ tool | tojson }}
+      {%- endif -%}
+      {%- endfor %}
+      </tools>
+
+      Return each function call as JSON within <tool_call></tool_call> XML tags:
+      <tool_call>
+      {"name": <function-name>, "arguments": <args-json-object>}
+      </tool_call>
+      {%- endmacro %}
+      {%- if messages[0]['role'] != 'system' %}
+      <|im_start|>system
+      You are a helpful assistant.{% if tools %}{{ render_tools(tools) }}{% endif %}<|im_end|>
+      {%- endif %}
+      {%- for message in messages %}
+      <|im_start|>{{ message['role'] }}
+      {%- if message['role'] == 'system' %}
+      {{ message['content'] }}{% if tools and '# Tools' not in message['content'] %}{{ render_tools(tools) }}{% endif %}
+      {%- elif message['role'] == 'tool' %}
+      <tool_response>
+      {{ render_content(message['content']) }}
+      </tool_response>
+      {%- else %}
+      {{ render_content(message['content']) }}
+      {%- if message['role'] == 'assistant' and message.tool_calls %}
+      {%- for tool_call in message.tool_calls %}
+      {%- set tc = tool_call.function if tool_call.function is defined else tool_call %}
+      <tool_call>
+      {"name": "{{ tc.name }}", "arguments": {{ tc.arguments }}}
+      </tool_call>
+      {%- endfor %}
+      {%- endif %}
+      {%- endif %}<|im_end|>
+      {%- endfor %}
+      {%- if add_generation_prompt %}<|im_start|>assistant
+      {%- endif %}
+  rollout:
+    name: sglang
+    multi_turn:
+      enable: true
+      format: hermes
